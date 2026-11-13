@@ -159,7 +159,33 @@ export const getCurrentUser = async (userId) => {
     name: user.name,
     email: user.email,
     role: user.role,
-    isActive: user.isActive,
+    isEmailVerified: user.isEmailVerified,
     createdAt: user.createdAt,
   };
 };
+
+
+export const verifyUserEmail = async(token)=>{
+  if(!token){
+     return res.status(400).json({success:false,message:"Verification token is required."});
+    }
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      emailVerificationToken:hashedToken,
+      emailVerificationExpires:{$gt:Date.now()},
+      isEmailVerified:false,
+    })
+
+    if(!user){
+      return res.status(400).json({success:false,message:"Invalid or expired verification link."});
+    }
+
+    user.isEmailVerified=true,
+    user.emailVerificationExpires=null;
+    user.emailVerificationToken=null;
+
+    await user.save();
+    return {user};
+}

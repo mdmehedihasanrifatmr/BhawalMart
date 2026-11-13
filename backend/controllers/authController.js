@@ -1,9 +1,11 @@
+import User from "../models/User.js";
 import {
   registerUser,
   loginUser,
   refreshAccessToken,
   getCurrentUser,
   changePassword,
+  verifyUserEmail,
 } from "../services/authService.js";
 import AppError from "../utils/AppError.js";
 
@@ -92,3 +94,22 @@ export const refresh = async (req, res) => {
     message: "Access token refreshed.",
   });
 };
+
+
+
+export const verifyEmail = async(req,res,next)=>{
+  try{
+    const {token} =req.body;
+
+    const user = await verifyUserEmail(token);
+
+    if(!user){
+      res.status(400).json({success:false,message:"Invalid token or expired verification link."});
+    }
+
+    res.status(200).json({success:true,message:"Email verification successful. You can now sign in."});
+
+  }catch(e){
+    next(e);
+  }
+}

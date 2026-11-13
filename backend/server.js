@@ -8,6 +8,10 @@ import cookieParser from "cookie-parser";
 import {connectDB} from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import brandRoutes from "./routes/brandRoutes.js";
+
+import productRoutes from "./routes/productRoutes.js";
 
 import { PORT, MAX_JSON_SIZE, CLIENT_URL } from "./config/config.js";
 
@@ -22,7 +26,6 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Load environment variables first
 dotenv.config({
   path: path.resolve(__dirname, ".env"),
 });
@@ -82,7 +85,10 @@ app.get("/health", (req, res) => {
 //Routes
 
 app.use("/api/auth", authRoutes);
-// app.use("/api/doctors", doctorRoutes);
+app.use("/api/product",productRoutes);
+app.use("/api/category",categoryRoutes);
+app.use("/api/brand",brandRoutes);
+
 // app.use("/api/patients",patientRoutes);
 //404 error handling
 
